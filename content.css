@@ -1,0 +1,19 @@
+#rulesContainer {
+    max-height: 200px; /* Ограничиваем высоту */
+    overflow-y: auto;  /* Добавляем прокрутку */
+    border: 1px solid #eee;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+.plugin-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; }
+.btn-delete { background: #ff4d4d; color: white; border: none; cursor: pointer; padding: 2px 8px; border-radius: 3px; }
+
+.schedule-section {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+.days-row { display: flex; flex-wrap: wrap; gap: 5px; margin: 5px 0; }
+.day-label { font-size: 11px; display: flex; align-items: center; gap: 2px; }
