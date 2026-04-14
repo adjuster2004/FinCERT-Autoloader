@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тестовый стенд рассылок</title>
+    <style>
+        body { 
+            background-color: #1a202c; color: #cbd5e1; 
+            font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh;
+        }
+        /* Левая панель с информацией */
+        #left-panel {
+            width: 300px; border-right: 1px solid #334155; padding: 20px; 
+            box-sizing: border-box; display: none; background-color: #0f172a;
+        }
+        #left-panel h2 { color: #f8fafc; font-size: 18px; }
+        .info-row { margin-bottom: 10px; font-size: 14px; }
+        
+        /* Кнопка скачивания ТОЧНО как в условии */
+        .mc-button-overlay {
+            display: inline-block; background-color: #3b82f6; color: white;
+            padding: 10px 15px; border-radius: 4px; cursor: pointer;
+            margin-top: 20px; text-align: center; font-weight: bold; width: 100%; box-sizing: border-box;
+        }
+        .mc-button-overlay:hover { background-color: #2563eb; }
+
+        /* Правая часть - таблица */
+        #main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; background: #1e293b; }
+        th, td { padding: 12px; border-bottom: 1px solid #334155; cursor: pointer; }
+        th { background-color: #0f172a; color: #94a3b8; font-weight: normal; }
+        tr:hover { background-color: #334155; }
+        
+        /* Кнопка генерации тестовых данных */
+        #generate-btn {
+            background: #10b981; color: white; border: none; padding: 10px 15px;
+            border-radius: 4px; cursor: pointer; margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="left-panel">
+        <h2>Информация о рассылке</h2>
+        <div class="info-row" id="info-id">ID: <span></span></div>
+        <div class="info-row" id="info-type">Тип: <span></span></div>
+        <div class="info-row" id="info-subtype">Подтип: <span></span></div>
+        
+        <div class="mc-button-overlay" onclick="downloadAttachment()">Скачать вложение</div>
+    </div>
+
+    <div id="main-content">
+        <button id="generate-btn" onclick="addNewRow()">+ Сгенерировать новое письмо</button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Дата публикации</th>
+                    <th>Идентификатор</th>
+                    <th>Заголовок</th>
+                    <th>Тип рассылки</th>
+                    <th>Подтип рассылки</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        let counter = 1000;
+        let currentSelectedId = null;
+
+        // Базовые подтипы для теста
+        const subtypes = ['Отчет', 'Договор', 'Акт', 'Счет'];
+
+        function createRowHtml(id, subtype) {
+            const date = new Date().toLocaleDateString();
+            return `
+                <td>${date}</td>
+                <td>MSG-${id}</td>
+                <td>Входящий документ #${id}</td>
+                <td>Документооборот</td>
+                <td>${subtype}</td>
+            `;
+        }
+
+        // Добавление новой записи (эмуляция прихода письма)
+        function addNewRow() {
+            counter++;
+            const tbody = document.getElementById('table-body');
+            const tr = document.createElement('tr');
+            
+            const randomSubtype = subtypes[Math.floor(Math.random() * subtypes.length)];
+            const currentId = counter; // Сохраняем ID для замыкания
+
+            tr.innerHTML = createRowHtml(currentId, randomSubtype);
+            
+            // Обработчик клика по строке (эмуляция открытия панели)
+            tr.onclick = () => {
+                document.getElementById('left-panel').style.display = 'block';
+                document.querySelector('#info-id span').innerText = `MSG-${currentId}`;
+                document.querySelector('#info-type span').innerText = 'Документооборот';
+                document.querySelector('#info-subtype span').innerText = randomSubtype;
+                currentSelectedId = `MSG-${currentId}`;
+                
+                // Подсвечиваем выбранную строку
+                document.querySelectorAll('tr').forEach(r => r.style.background = '');
+                tr.style.background = '#334155';
+            };
+
+            // Добавляем в начало таблицы (свежие сверху)
+            tbody.insertBefore(tr, tbody.firstChild);
+        }
+
+        // Имитация скачивания файла
+        function downloadAttachment() {
+            if (!currentSelectedId) return;
+            
+            // Создаем невидимую ссылку на dummy.txt и кликаем её
+            const a = document.createElement('a');
+            a.href = 'dummy.txt';
+            a.download = `${currentSelectedId}_attachment.txt`; // Имя файла при скачивании
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Генерируем 3 стартовых записи при загрузке страницы
+        addNewRow(); addNewRow(); addNewRow();
+    </script>
+</body>
+</html>
